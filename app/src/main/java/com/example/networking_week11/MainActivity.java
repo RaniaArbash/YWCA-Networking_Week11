@@ -24,11 +24,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements CitiesAdapter.cityClickListner{
+public class MainActivity extends AppCompatActivity implements
+        CitiesAdapter.cityClickListner, NetworkingService.NetworkingListener {
 
     ArrayList<City> cities = new ArrayList<City>();
     RecyclerView recyclerView;
     CitiesAdapter adapter;
+    NetworkingService networkingService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +42,9 @@ public class MainActivity extends AppCompatActivity implements CitiesAdapter.cit
         adapter = new CitiesAdapter(this,cities);
         recyclerView.setAdapter(adapter);
         setTitle("Search for new cities..");
+
+        networkingService = ( (myApp)getApplication()).getNetworkingService();
+        networkingService.listener = this;
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -55,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements CitiesAdapter.cit
             searchView.setIconified(false);
             searchView.setQuery(searchFor, false);
         }
+
         searchView.setQueryHint("Search for cities");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -68,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements CitiesAdapter.cit
                 Log.d("query change", newText);
                 if (newText.length() >= 3) {
                     // seach for city
+                    networkingService.connect(newText);
+
                 }
                 return false;
             }
@@ -79,5 +87,10 @@ public class MainActivity extends AppCompatActivity implements CitiesAdapter.cit
     public void cityClicked(City selectedCity) {
         Intent intent = new Intent(this,WeatherActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void APINetworkListner(String jsonString) {
+        Log.d("tag", jsonString);// not parsed yet.
     }
 }

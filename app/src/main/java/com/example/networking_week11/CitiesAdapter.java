@@ -36,7 +36,7 @@ public class CitiesAdapter extends RecyclerView.Adapter<CitiesAdapter.TasksViewH
         @Override
         public void onBindViewHolder(TasksViewHolder holder, int position) {
             City t = cityList.get(position);
-            holder.cityTextView.setText(t.getCityName() +": "+t.getCountry());
+            holder.cityTextView.setText(t.getCityName() );
         }
 
         @Override
