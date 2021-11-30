@@ -1,5 +1,7 @@
 package com.example.networking_week11;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -13,26 +15,70 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class NetworkingService {
+    String  weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=";
+    String weatherURL2 = "&appid=071c3ffca10be01d334505630d2c1a9c";
+
+    String iconURL1 = "https://openweathermap.org/img/wn/";
+    String iconURL2 = "@2x.png";
+
+    String url = "http://gd.geobytes.com/AutoCompleteCity?&q=";
+
 
     public static final ExecutorService networkingExecutor = Executors.newFixedThreadPool(4);
-    String url = "http://gd.geobytes.com/AutoCompleteCity?&q=";
     static Handler networkHander = new Handler(Looper.getMainLooper());
+
     interface NetworkingListener{
         void APINetworkListner(String jsonString);
+        void APINetworkingListerForImage(Bitmap image);
     }
 
     NetworkingListener listener;
 
+
+    public void fetchCitiesData(String text){
+        String completeURL = url + text;
+        connect(completeURL);
+    }
+
+    public void fetchWeatherData(String cityName){
+        String completeURL = weatherURL+cityName+weatherURL2;
+        connect(completeURL);
+    }
+
+    public void getImageData(String icon){
+        String completeURL = iconURL1 + icon + iconURL2;
+        networkingExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL urlObj = new URL(completeURL);
+                    InputStream in = ((InputStream)urlObj.getContent());
+                    Bitmap imageData = BitmapFactory.decodeStream(in);
+                    networkHander.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.APINetworkingListerForImage(imageData);
+                        }
+                    });
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     // tor
-    public void connect(String text){
+    private void connect(String url){
         networkingExecutor.execute(new Runnable() {
             String jsonString = "";
             @Override
             public void run() {
-                String completeURL = url + text;
+
                 HttpURLConnection httpURLConnection = null;
                 try {
-                    URL urlObject = new URL(completeURL);
+                    URL urlObject = new URL(url);
                     httpURLConnection = (HttpURLConnection) urlObject.openConnection();
                     httpURLConnection.setRequestMethod("GET");
                     httpURLConnection.setRequestProperty("Content-Type","application/json");

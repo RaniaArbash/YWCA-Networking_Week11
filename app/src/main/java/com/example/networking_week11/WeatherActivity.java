@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class WeatherActivity extends AppCompatActivity {
+public class WeatherActivity extends AppCompatActivity implements NetworkingService.NetworkingListener{
 
 
     TextView cityText;
@@ -22,19 +22,31 @@ public class WeatherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_weather);
         networkingService = ( (myApp)getApplication()).getNetworkingService();
         jsonService = ( (myApp)getApplication()).getJsonService();
-
+        networkingService.listener = this;
 
         String cityName = getIntent().getStringExtra("SelectedCity");
+        networkingService.fetchWeatherData(cityName);
+        cityText = findViewById(R.id.cityName);
+        cityText.setText(cityName);
+        weatherText = findViewById(R.id.weather);
+        imageView = findViewById(R.id.image);
+    }
 
-
-
-//
-//        cityText = findViewById(R.id.cityName);
-//        weatherText = findViewById(R.id.weather);
-//        imageView = findViewById(R.id.image);
-//        cityText.setText(cityName);
-
+    @Override
+    protected void onPause() {
+        super.onPause();
 
     }
 
+    @Override
+    public void APINetworkListner(String jsonString) {
+        WeatherData weatherData = jsonService.parseWeatherAPIData(jsonString);
+        weatherText.setText(weatherData.description + " : "+weatherData.temp );
+        networkingService.getImageData(weatherData.icon);
+    }
+
+    @Override
+    public void APINetworkingListerForImage(Bitmap image) {
+        imageView.setImageBitmap(image);
+    }
 }

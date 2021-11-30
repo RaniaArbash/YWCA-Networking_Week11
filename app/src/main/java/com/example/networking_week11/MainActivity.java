@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements
                 Log.d("query change", newText);
                 if (newText.length() >= 3) {
                     // seach for city
-                    networkingService.connect(newText);
+                    networkingService.fetchCitiesData(newText);
                 }
                 else {
                     adapter.cityList = new ArrayList<>(0);
@@ -86,6 +86,14 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        networkingService = ( (myApp)getApplication()).getNetworkingService();
+        jsonService = ( (myApp)getApplication()).getJsonService();
+        networkingService.listener = this;
     }
 
     @Override
@@ -101,5 +109,10 @@ public class MainActivity extends AppCompatActivity implements
         cities =  jsonService.parseCitiesAPIJson(jsonString);
         adapter.cityList = cities;
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void APINetworkingListerForImage(Bitmap image) {
+
     }
 }
