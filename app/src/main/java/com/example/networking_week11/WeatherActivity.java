@@ -13,12 +13,21 @@ public class WeatherActivity extends AppCompatActivity {
     TextView cityText;
     TextView weatherText;
     ImageView imageView;
+    NetworkingService networkingService;
+    JsonService jsonService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
+        networkingService = ( (myApp)getApplication()).getNetworkingService();
+        jsonService = ( (myApp)getApplication()).getJsonService();
 
-//        String cityName = getIntent().getStringExtra("city");
+
+        String cityName = getIntent().getStringExtra("SelectedCity");
+
+
+
 //
 //        cityText = findViewById(R.id.cityName);
 //        weatherText = findViewById(R.id.weather);

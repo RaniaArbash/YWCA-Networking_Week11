@@ -8,6 +8,11 @@ public class myApp extends Application {
       return networkingService;
    }
 
-   private NetworkingService networkingService = new NetworkingService();
 
+   private NetworkingService networkingService = new NetworkingService();
+   private JsonService jsonService = new JsonService();
+
+   public JsonService getJsonService() {
+      return jsonService;
+   }
 }

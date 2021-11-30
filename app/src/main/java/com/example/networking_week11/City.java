@@ -9,7 +9,7 @@ public class City {
 
 
     City(){}
-    public City(String city, String country){
+    public City(String city){
         this.cityName = city;
     }
 

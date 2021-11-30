@@ -17,7 +17,6 @@ public class NetworkingService {
     public static final ExecutorService networkingExecutor = Executors.newFixedThreadPool(4);
     String url = "http://gd.geobytes.com/AutoCompleteCity?&q=";
     static Handler networkHander = new Handler(Looper.getMainLooper());
-
     interface NetworkingListener{
         void APINetworkListner(String jsonString);
     }
@@ -26,7 +25,6 @@ public class NetworkingService {
 
     // tor
     public void connect(String text){
-
         networkingExecutor.execute(new Runnable() {
             String jsonString = "";
             @Override
@@ -40,7 +38,7 @@ public class NetworkingService {
                     httpURLConnection.setRequestProperty("Content-Type","application/json");
                     int statues = httpURLConnection.getResponseCode();
 
-                    if ((statues > 200) && (statues <= 299)) {
+                    if ((statues >= 200) && (statues <= 299)) {
                         InputStream in = httpURLConnection.getInputStream();
                         InputStreamReader inputStreamReader = new InputStreamReader(in);
                         int read = 0;
